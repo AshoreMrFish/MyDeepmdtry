@@ -1,0 +1,41 @@
+# bulk water
+
+units           metal
+boundary        p p p
+atom_style      atomic #重要  full:molecular + charge; atomic:only the default values;charge:charge
+
+neighbor        2.0 bin #截断半径相关的东西
+neigh_modify    every 10 delay 0 check no #邻近原子列表更新速度
+
+read_data       MAPbI3cub.lmp
+
+#mass            1 12.010700 # C
+#mass            3 14.006700 # N
+#mass           3 1.007940 # H
+#mass            4 207.199997 # Pb 
+#mass            2 126.904472 # I
+
+#read_data	MAPbI3cubH.lmp
+
+#pair_style	deepmd NVTcub450kes.pb
+pair_style      deepmd ../dp7/dp7.pb
+pair_coeff  * *	
+
+#velocity        all create 450.0 23456789 #
+
+#minimize 	1.0e-4 1.0e-6 100 1000
+
+fix             1 all nvt temp 450.0 450.0 0.1 #fix [ID] [group-ID] [style] [args]
+#fix 		1 all npt temp 450.0 450.0 0.1 iso 1 1 1
+#fix 		mobile all nve/limit 0.1
+#neighbor 	0.3 bin
+
+timestep        0.001 ##步长
+thermo_style    custom step pe ke etotal temp press vol
+thermo          100
+#dump            1 all atom 100 MAPbI3cub.dump
+
+dump		1 all custom 100 tem.dump id type x y z mass #element #dump [ID] [group ID] [style] [timestep] [filename] [args] 
+#dump_modify	1 element C N Pb I
+
+run             10000
