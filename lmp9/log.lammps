@@ -1,0 +1,132 @@
+LAMMPS (29 Sep 2021 - Update 1)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+plugin load libdeepmd_lmp.so
+Loading plugin: deepmd pair style v2.0 by Han Wang
+Loading plugin: compute deeptensor/atom v2.0 by Han Wang
+Loading plugin: fix dplr v2.0 by Han Wang
+# bulk water
+
+units           metal
+boundary        p p p
+atom_style      atomic #重要  full:molecular + charge; atomic:only the default values;charge:charge
+
+neighbor        2.0 bin #截断半径相关的东西
+neigh_modify    every 10 delay 0 check no #邻近原子列表更新速度
+
+read_data       MAPbI3cub.lmp
+Reading data file ...
+  triclinic box = (1.7976900 0.0049470000 0.023884000) to (52.490531 50.008147 51.425485) with tilt (0.010213000 1.0595680 0.0091150000)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  6336 atoms
+  read_data CPU = 0.015 seconds
+
+#mass            1 12.010700 # C
+#mass            3 14.006700 # N
+#mass           3 1.007940 # H
+#mass            4 207.199997 # Pb
+#mass            2 126.904472 # I
+
+#read_data	MAPbI3cubH.lmp
+
+#pair_style	deepmd NVTcub450kes.pb
+pair_style      deepmd ../dp4/dp4.pb
+pair_coeff  * *
+
+#velocity        all create 450.0 23456789 #
+
+#minimize 	1.0e-4 1.0e-6 100 1000
+
+fix             1 all nvt temp 450.0 450.0 0.1 #fix [ID] [group-ID] [style] [args]
+#fix 		1 all npt temp 450.0 450.0 0.1 iso 1 1 1
+#fix 		mobile all nve/limit 0.1
+#neighbor 	0.3 bin
+
+timestep        0.001 ##步长
+thermo_style    custom step pe ke etotal temp press vol
+thermo          100
+#dump            1 all atom 100 MAPbI3cub.dump
+
+dump		1 all custom 100 tem.dump id type x y z mass #element #dump [ID] [group ID] [style] [timestep] [filename] [args]
+#dump_modify	1 element C N Pb I
+
+run             10000
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- USER-DEEPMD package:
+
+@article{Wang_ComputPhysCommun_2018_v228_p178,
+  author = {Wang, Han and Zhang, Linfeng and Han, Jiequn and E, Weinan},
+  doi = {10.1016/j.cpc.2018.03.016},
+  url = {https://doi.org/10.1016/j.cpc.2018.03.016},
+  year = 2018,
+  month = {jul},
+  publisher = {Elsevier {BV}},
+  volume = 228,
+  journal = {Comput. Phys. Commun.},
+  title = {{DeePMD-kit: A deep learning package for many-body potential energy representation and molecular dynamics}},
+  pages = {178--184}
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Neighbor list info ...
+  update every 10 steps, delay 0 steps, check no
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7.5
+  ghost atom cutoff = 7.5
+  binsize = 3.75, bins = 14 14 14
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair deepmd, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 6.318 | 6.318 | 6.318 Mbytes
+Step PotEng KinEng TotEng Temp Press Volume 
+       0   -25881.093            0   -25881.093            0    10423.784       130293 
+     100   -25890.248    10.962055   -25879.286    13.386921    8409.8741       130293 
+     200   -25894.409    19.036409   -25875.373    23.247367    6838.1238       130293 
+     300   -25885.708    16.426484   -25869.282    20.060112    8772.3276       130293 
+     400    -25885.02    24.067602   -25860.953    29.391487    6661.2924       130293 
+     500   -25880.495    31.644272    -25848.85    38.644158    5333.0187       130293 
+     600   -25875.173    39.869335   -25835.304     48.68865     9489.394       130293 
+     700   -25878.622    66.377094   -25812.245    81.060071     7406.663       130293 
+     800   -25869.772    87.889665   -25781.883    107.33134    9239.8586       130293 
+     900   -25869.345    132.92283   -25736.422    162.32608    13289.005       130293 
+    1000   -25844.801     167.5846   -25677.216    204.65524    6542.2087       130293 
+    1100   -25807.427    198.85493   -25608.572    242.84273    5843.0373       130293 
+    1200   -25792.834    263.65739   -25529.177    321.97984    10476.428       130293 
+    1300    -25772.49    328.44719   -25444.043    401.10151    4285.8139       130293 
+    1400   -25659.805    292.86688   -25366.938    357.65063    12639.612       130293 
+    1500   -25865.246    440.03059   -25425.216    537.36776     7898.202       130293 
+    1600   -26479.979    987.70417   -25492.275    1206.1897     6726.435       130293 
+    1700   -26403.254    10344.337   -16058.918    12632.561    84918.972       130293 
+    1800   -26180.739    4253.2583    -21927.48    5194.1023    35355.846       130293 
+    1900    -27369.95    84857.216    57487.266     103628.1    690141.05       130293 
+    2000   -28277.917    6631.8152   -21646.101     8098.809     47446.91       130293 
+    2100    -29938.72    9516.1496   -20422.571    11621.174      65010.9       130293 
+    2200   -30327.329    8258.6872   -22068.642    10085.554    57595.649       130293 
+    2300   -31711.618    9256.5992   -22455.018     11304.21    59441.819       130293 
+    2400   -33680.905    9394.7847   -24286.121    11472.962    57408.757       130293 
+    2500    -35289.46    9065.1434   -26224.317    11070.403    50693.006       130293 
+    2600    -37738.33    10229.825   -27508.505    12492.718        62195       130293 
+    2700   -39614.569    12728.138   -26886.431    15543.672    79244.622       130293 
+    2800   -41934.535    8927.9288   -33006.606    10902.835     52998.12       130293 
+    2900   -43910.333    8943.2918   -34967.042    10921.597     52126.13       130293 
+    3000   -46351.485    8054.6473   -38296.838    9836.3794    44811.685       130293 
+    3100   -47661.201    7963.3287   -39697.872    9724.8606    44250.413       130293 
+    3200   -49644.921    6860.2058   -42784.715    8377.7208    36235.978       130293 
+    3300   -50332.559    7053.8577   -43278.701    8614.2097    41591.493       130293 
+    3400   -51989.537    7572.5399   -44416.997    9247.6272    44098.064       130293 
+    3500   -53083.515    6483.1244   -46600.391     7917.227    37905.553       130293 
+    3600   -53571.308    6562.6836   -47008.625    8014.3851    40756.586       130293 
+    3700   -55025.572    6299.9306   -48725.642    7693.5098    34994.763       130293 
+    3800   -56066.443    6018.9849   -50047.458    7350.4173    35550.994       130293 
+    3900   -57564.405    5098.2205   -52466.185    6225.9748    25270.462       130293 
+    4000   -59364.944    5499.0789   -53865.865    6715.5053    30116.988       130293 
+ERROR on proc 0: Non-numeric atom coords - simulation unstable (src/domain.cpp:550)
