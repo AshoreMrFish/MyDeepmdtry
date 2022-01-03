@@ -1,0 +1,28 @@
+System = MAPbI3 MD T = 100k
+#####This is my INCAR file for cell lattic constant optimization######
+ISTART = 0    
+ICHARG = 2    
+PERC = Low
+LREAL = Auto
+LCHARG = .F. 
+LWAVE = .F. 
+ISYM = 0 #recommend to turn off symtre
+####ion step####
+IBRION = 0 #turn on MD
+####MD######
+MDALGO = 2
+ISIF = 2
+SMASS = 1 
+TEBEG = 450
+NSW = 2500
+POTIM = 3 # 3 is too large switch to 1
+ANDERSEN_PROB = 0.5 #default = 0, NVE. change from 0 to 0.5  
+####ele step####  
+ENCUT  = 350 eV #for lattic constant optimization, increase ENCUT
+#NELM   = 60  
+#EDIFF  = 1e-06   
+ALGO   = Very Fast
+SIGMA  = 0.1   
+ISMEAR = 0 
+NPAR = 4
+
